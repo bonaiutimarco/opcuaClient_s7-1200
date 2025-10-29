@@ -7,10 +7,8 @@ const {
   DataValue,
   makeBrowsePath,
   MessageSecurityMode,
-  MonitoringParametersOptions,
   NodeClassMask,
   OPCUAClient,
-  ReadValueIdOptions,
   ResultMask,
   SecurityPolicy,
   TimestampsToReturn,
@@ -45,16 +43,16 @@ const endpointUrl = "opc.tcp://192.168.80.100:4840";
 
 async function main() {
   try {
-    // step 1 : connect to
+    // step 1 : Mi connetto
     await client.connect(endpointUrl);
     console.log("connesso");
 
-    // step 2 : createSession
+    // step 2 : Creo la sessione
     const session = await client.createSession();
     console.log("sessione creata");
 
 
-    /* step 3' : read a variable with read
+    /* step 3' : Leggo una variabile con read
     const dataValue = await session.read({
         nodeId: "ns=4;i=2",
         attributeId: AttributeIds.Value
@@ -149,18 +147,18 @@ async function main() {
     }
         await new Promise(resolve => setTimeout(resolve,10000));
         await subscription.terminate();
-        console.log("sub terminated");
+        console.log("sottoscrizione terminata");
 
 
 
-    // close session
+    // Chiudo la sessione
     await session.close();
 
-    // disconnecting
+    // Mi disconnetto
     await client.disconnect();
     console.log("disconnesso");
   } catch(err) {
-    console.log("An error has occurred : ",err);
+    console.log("c'è stato un errore : ",err);
   }
 }
 
