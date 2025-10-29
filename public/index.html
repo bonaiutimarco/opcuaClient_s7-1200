@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Monitor OPC UA</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #f8f8f8; padding: 20px; }
+    table { border-collapse: collapse; width: 60%; background: white; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Monitor OPC UA</h1>
+  <table id="opcTable">
+    <thead>
+      <tr><th>Nome Variabile</th><th>Valore</th><th>Ultimo Aggiornamento</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const socket = io();
+    const tbody = document.querySelector("#opcTable tbody");
+    const rows = {};
+
+    socket.on("update", ({ name, value, timestamp }) => {
+      if (!rows[name]) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${name}</td><td>${value}</td><td>${timestamp}</td>`;
+        tbody.appendChild(tr);
+        rows[name] = tr;
+      } else {
+        const tds = rows[name].children;
+        tds[1].textContent = value;
+        tds[2].textContent = timestamp;
+      }
+    });
+  </script>
+</body>
+</html>
