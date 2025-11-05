@@ -114,7 +114,7 @@ async function main() {
       console.log("valore cambiato: ", dataValue.value.toString());
     });
         await new Promise(resolve => setTimeout(resolve,10000));
-        await subscription.terminate();
+        await subscription.terminate(); 
         console.log("sub terminated");*/
 
     // step 5: installo una sottoscrizione e monitoro più elementi
