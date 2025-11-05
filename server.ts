@@ -52,6 +52,25 @@ async function main() {
     console.log("sessione creata");
 
 
+    const browseResult = await session.browse({
+      nodeId: "ns=4;i=1",
+      referenceTypeId: "Organizes",
+      includeSubtypes: true,
+      nodeClassMask: NodeClassMask.Object | NodeClassMask.Variable,
+      browseDirection: BrowseDirection.Forward,
+      resultMask: ResultMask.BrowseName | ResultMask.DisplayName | ResultMask.NodeClass | ResultMask.TypeDefinition
+    });
+    if (!browseResult.references){
+      console.log("error");
+    }
+    else{
+      console.log("references");
+    for (const reference of browseResult.references){
+      console.log(reference.browseName.toString());
+    }
+
+    }
+    
     /* step 3' : Leggo una variabile con read
     const dataValue = await session.read({
         nodeId: "ns=4;i=2",
