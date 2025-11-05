@@ -121,7 +121,6 @@ async function main() {
     const itemsToMonitor = [
         "ns=4;i=2",
         "ns=4;i=3",
-        "ns=4;i=4"
        ];
 
        const parameters = { 
@@ -164,7 +163,7 @@ async function main() {
         io.emit("update", { name, varvalue, timestamp} );
        });
     }
-        await new Promise(resolve => setTimeout(resolve,10000));
+        await new Promise(resolve => setTimeout(resolve,30000));
         await subscription.terminate();
         console.log("sottoscrizione terminata");
 
