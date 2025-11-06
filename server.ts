@@ -51,8 +51,8 @@ async function main() {
     const session = await client.createSession();
     console.log("sessione creata");
 
-
-    const browseResult = await session.browse({
+    // browse della cartella
+    /*const browseResult = await session.browse({
       nodeId: "ns=4;i=1",
       referenceTypeId: "Organizes",
       includeSubtypes: true,
@@ -69,7 +69,42 @@ async function main() {
       console.log(reference.browseName.toString());
     }
 
+    }*/
+
+
+  // Browse della cartella e inserimento del nodeId nella map
+  interface variabili {
+    nome: "";
+    valore: "";
+  };
+  const db_variabili = new Map<string, variabili>();
+  const browseResult = await session.browse({
+    nodeId: "ns=4;i=1",
+    referenceTypeId: "Organizes",
+    includeSubtypes: true,
+    nodeClassMask: NodeClassMask.Object | NodeClassMask.Variable,
+    browseDirection: BrowseDirection.Forward,
+    resultMask: ResultMask.BrowseName | ResultMask.DisplayName | ResultMask.NodeClass | ResultMask.TypeDefinition
+  });
+  if (!browseResult.references){
+      console.log("error");
     }
+    else{
+      for (const reference of browseResult.references){
+      if (db_variabili.has(reference.nodeId.toString())){
+        continue;
+      }
+      else{
+        //Aggiungo un elemento alla map
+        db_variabili.set(reference.nodeId.toString(), {nome: "", valore: ""});
+      }
+    }
+    }
+    for (const key of db_variabili){
+      console.log(db_variabili);
+    }
+
+
     
     /* step 3' : Leggo una variabile con read
     const dataValue = await session.read({
@@ -145,8 +180,35 @@ async function main() {
             console.log("terminated");
         });
 
-       
-       for (const ids of itemsToMonitor){
+       for (const key of db_variabili.keys()){
+        const obj = db_variabili.get(key);
+        const itemInfo = await session.read(
+          {nodeId: obj?.nome, attributeId: AttributeIds.BrowseName});
+        const name = itemInfo.value.value.name;
+        const monitoredItem = await subscription.monitor(
+          {nodeId: obj?.nome, attributeId: AttributeIds.Value},
+          parameters,
+          TimestampsToReturn.Both
+        );
+        const valore_variabile = itemInfo.value.value;
+        monitoredItem.on("changed", (dataValue: any) => {
+        if(obj){
+          obj.nome = name;
+          obj.valore = valore_variabile;
+        }
+        
+        console.log(db_variabili);
+        const varvalue = dataValue.value.value;
+        const timestamp = new Date().toLocaleTimeString();
+
+        io.emit("update", { name, varvalue, timestamp} );
+       });
+    }
+        await new Promise(resolve => setTimeout(resolve,30000));
+        await subscription.terminate();
+        console.log("sottoscrizione terminata");
+
+       /*for (const ids of itemsToMonitor){
         const itemInfo = await session.read(
           {nodeId: ids, attributeId: AttributeIds.BrowseName});
         const name = itemInfo.value.value.name;
@@ -165,7 +227,7 @@ async function main() {
     }
         await new Promise(resolve => setTimeout(resolve,30000));
         await subscription.terminate();
-        console.log("sottoscrizione terminata");
+        console.log("sottoscrizione terminata");*/
 
 
 
